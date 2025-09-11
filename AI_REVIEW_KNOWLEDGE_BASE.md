@@ -99,6 +99,77 @@ All items are used as a checklist in Phase 4.5 of the automated workflow.
 
 ---
 
+## SonarQube Integration Knowledge (BOC-52)
+
+### Static Analysis Rule Mapping
+
+#### JavaScript/TypeScript Core Rules
+- **javascript:S3699** → ESLint: no-void-return (戻り値なし関数の戻り値使用)
+  - [ ] Check for usage of return values from functions that don't return anything
+  - [ ] Verify async functions have proper return statements if their values are used
+- **javascript:S2486** → ESLint: no-empty-catch (空のcatchブロック)
+  - [ ] Ensure catch blocks contain error handling logic (logging, re-throwing, or recovery)
+  - [ ] Avoid completely empty catch blocks without comments explaining why
+- **javascript:S6535** → ESLint: no-useless-escape (不要エスケープ文字)
+  - [ ] Remove unnecessary escape characters in strings and regex patterns
+  - [ ] Validate that escape sequences are actually needed for the context
+
+#### Security Pattern Recognition
+- **Taint Source Detection**: user input sources requiring validation
+  - [ ] Check req.body, location.hash, URL params for proper sanitization
+  - [ ] Verify user inputs are validated before processing
+- **Dangerous Sink Prevention**: high-risk operations requiring careful input handling
+  - [ ] Audit usage of eval(), innerHTML, SQL queries, file operations
+  - [ ] Ensure proper sanitization before dangerous operations
+
+### AST Analysis Guidelines
+
+#### Variable Scope Tracking
+- [ ] Verify variable declaration position matches usage context
+- [ ] Detect unused variables and unreachable code patterns
+- [ ] Check for unintended variable reassignment in outer scopes
+- [ ] Validate variable lifetime and scope boundaries
+
+#### Data Flow Analysis  
+- [ ] Verify function argument → return value type consistency
+- [ ] Validate asynchronous processing Promise chain integrity
+- [ ] Track error propagation paths through function calls
+- [ ] Ensure data transformations maintain expected types
+
+### Security Vulnerability Pattern Library
+
+#### XSS Prevention Patterns
+❌ **Dangerous**: `element.innerHTML = userInput`  
+✅ **Safe**: `element.textContent = userInput` or `DOMPurify.sanitize(userInput)`
+- [ ] Check for direct innerHTML assignments with user data
+- [ ] Verify HTML sanitization is applied to user-generated content
+
+#### SQL Injection Prevention  
+❌ **Dangerous**: `query = "SELECT * FROM users WHERE id = " + userId`  
+✅ **Safe**: `query = "SELECT * FROM users WHERE id = ?" with parameterized values [userId]`
+- [ ] Audit string concatenation in database queries
+- [ ] Ensure parameterized queries or prepared statements are used
+
+#### Path Traversal Prevention
+❌ **Dangerous**: `fs.readFile(userPath)`  
+✅ **Safe**: `fs.readFile(path.resolve(basePath, path.normalize(userPath)))`
+- [ ] Check file system operations with user-provided paths
+- [ ] Verify path normalization and base directory restrictions
+
+### Code Structure Analysis Checklist
+
+#### Control Flow Complexity
+- [ ] Calculate and validate cyclomatic complexity stays within reasonable bounds
+- [ ] Identify deeply nested conditional statements requiring refactoring
+- [ ] Check for unreachable code after return/break/continue statements
+
+#### Function Analysis Patterns
+- [ ] Verify function signatures match their actual usage patterns
+- [ ] Check parameter validation at function entry points
+- [ ] Ensure proper error handling and return value management
+
+---
+
 ## Review Guidelines
 
 ### Phase 4.5 Enhanced Checklist
@@ -199,4 +270,4 @@ export default [
 
 ---
 
-*Last Updated: 2025-09-11 (BOC-46 Phase 4.5 vs SonarCloud Gap Analysis Integration)*
+*Last Updated: 2025-09-12 (BOC-52 SonarQube Integration Knowledge - Phase 1 Implementation)*
